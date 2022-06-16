@@ -2,13 +2,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DooropenDevice : MonoBehaviour
+public class DooropenDevice : BaseDevice
 {
     [SerializeField] Vector3 dPos;
 
     private bool open;
 
-    public void Operate()
+    public override void Operate()
     {
         if (open)
         {

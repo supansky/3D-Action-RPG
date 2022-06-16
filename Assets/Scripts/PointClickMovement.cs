@@ -46,8 +46,12 @@ public class PointClickMovement : MonoBehaviour
 			RaycastHit mouseHit;
 			if (Physics.Raycast(ray, out mouseHit))
             {
-				targetPos = mouseHit.point;
-				curSpeed = moveSpeed;
+				GameObject hitObject = mouseHit.transform.gameObject;
+				if (hitObject.layer == LayerMask.NameToLayer("Ground"))
+				{
+					targetPos = mouseHit.point;
+					curSpeed = moveSpeed;
+                }
             }
         }
 
@@ -85,15 +89,15 @@ public class PointClickMovement : MonoBehaviour
 
         if (hitGround)
         {
-            if (Input.GetButtonDown("Jump"))
-            {
-                vertSpeed = jumpSpeed;
-            }
-            else
-            {
+            //if (Input.GetButtonDown("Jump"))
+            //{
+            //   vertSpeed = jumpSpeed;
+            //}
+            //else
+            //{
                 vertSpeed = minFall;
                 animator.SetBool("Jumping", false);
-            }
+            //}
         }
         else
         {
