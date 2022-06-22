@@ -28,6 +28,8 @@ public class PointClickMovement : MonoBehaviour
 	private CharacterController charController;
 	private Animator animator;
 
+	public bool WallInfront { get; private set; }
+
 	void Start()
 	{
 		vertSpeed = minFall;
@@ -77,7 +79,7 @@ public class PointClickMovement : MonoBehaviour
                 }					
             }				
         }
-
+		
 		animator.SetFloat("Speed", movement.sqrMagnitude);
 
 		bool hitGround = false;

@@ -4,6 +4,7 @@ using UnityEngine;
 
 [RequireComponent(typeof (InventoryManager))]
 [RequireComponent(typeof (PlayerManager))]
+[RequireComponent(typeof(MissionManager))]
 
 
 public class Managers : MonoBehaviour
@@ -11,15 +12,22 @@ public class Managers : MonoBehaviour
     public static InventoryManager Inventory { get; private set; }
     public static PlayerManager Player { get; private set; }
 
+    public static MissionManager Mission { get; private set; }
+
     private List<IGameManager> startSequence;
 
     private void Awake()
     {
+        DontDestroyOnLoad(gameObject);
+
         Inventory = GetComponent<InventoryManager>();
         Player = GetComponent<PlayerManager>();
+        Mission = GetComponent<MissionManager>();
+
         startSequence = new List<IGameManager>();
         startSequence.Add(Inventory);
         startSequence.Add(Player);
+        startSequence.Add(Mission);
 
         StartCoroutine(StartupManagers());
     }
@@ -32,25 +40,29 @@ public class Managers : MonoBehaviour
         
         yield return null;
 
-        int total = startSequence.Count;
-        int started = 0;
+        int numModules = startSequence.Count;
+        int numReady = 0;
 
-        while (started < total)
+        while (numReady < numModules)
         {
-            int lastLoop = started;
-            started = 0;
+            int lastReady = numReady;
+            numReady = 0;
 
             foreach(IGameManager manager in startSequence)
             {
                 if (manager.Status == ManagerStatus.Started)
-                    started++;
+                    numReady++;
             }
-            if (started < lastLoop)
-                Debug.Log($"Progress: {started}/{total}");
+            if (numReady > lastReady)
+            {
+                Debug.Log($"Progress: {numReady}/{numModules}");
+                Messenger<int, int>.Broadcast(StartupEvent.MANAGERS_PROGRESS, numReady, numModules);
+            }
             yield return null;
         }
 
         Debug.Log("All managers started up");
+        Messenger.Broadcast(StartupEvent.MANAGERS_STARTED);
 
     }
 }
