@@ -14,12 +14,14 @@ public class UIController : MonoBehaviour
         Messenger.AddListener(GameEvent.HEALTH_UPDATED, OnHealthUpdated);
         Messenger.AddListener(GameEvent.LEVEL_COMPLETE, OnLevelComplete);
         Messenger.AddListener(GameEvent.LEVEL_FAILED, OnLevelFailed);
+        Messenger.AddListener(GameEvent.GAME_COMPLETE, OnGameComplete);
     }
     private void OnDisable()
     {
         Messenger.RemoveListener(GameEvent.HEALTH_UPDATED, OnHealthUpdated);
         Messenger.RemoveListener(GameEvent.LEVEL_COMPLETE, OnLevelComplete);
         Messenger.RemoveListener(GameEvent.LEVEL_FAILED, OnLevelFailed);
+        Messenger.RemoveListener(GameEvent.GAME_COMPLETE, OnGameComplete);
     }
 
     private void Start()
@@ -73,5 +75,20 @@ public class UIController : MonoBehaviour
 
         Managers.Player.Respawn();
         Managers.Mission.RestartCurrent();
-    }    
+    }
+    
+    public void SaveGame()
+    {
+        Managers.Data.SaveGameState();
+    }
+    public void LoadGame()
+    {
+        Managers.Data.LoadGameState();
+    }
+
+    private void OnGameComplete()
+    {
+        levelEnding.gameObject.SetActive(true);
+        levelEnding.text = "You Finished the Game!";
+    }
 }
